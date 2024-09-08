@@ -1,16 +1,22 @@
 const Notice = require("../models/notice.model");
 
-// Create a new notice
+// Create or replace the existing notice
 const createNotice = async (req, res) => {
 	try {
 		const { title, content } = req.body;
+
+		// Remove the existing notice if it exists
+		await Notice.deleteMany();
+
+		// Create a new notice
 		const newNotice = new Notice({
 			title,
 			content,
 		});
+
 		await newNotice.save();
 		res.status(201).json({
-			message: "Notice created successfully!",
+			message: "Notice created successfully, previous notice removed!",
 			notice: newNotice,
 		});
 	} catch (error) {
@@ -18,22 +24,12 @@ const createNotice = async (req, res) => {
 	}
 };
 
-// Get all notices
-const getNotices = async (req, res) => {
+// Get the current (single) notice
+const getNotice = async (req, res) => {
 	try {
-		const notices = await Notice.find().sort({ createdAt: -1 });
-		res.status(200).json(notices);
-	} catch (error) {
-		res.status(500).json({ error: "Failed to fetch notices" });
-	}
-};
-
-// Get a single notice by ID
-const getNoticeById = async (req, res) => {
-	try {
-		const notice = await Notice.findById(req.params.id);
+		const notice = await Notice.findOne().sort({ createdAt: -1 }); // Fetch the latest notice
 		if (!notice) {
-			return res.status(404).json({ error: "Notice not found" });
+			return res.status(404).json({ error: "No notice found" });
 		}
 		res.status(200).json(notice);
 	} catch (error) {
@@ -43,6 +39,5 @@ const getNoticeById = async (req, res) => {
 
 module.exports = {
 	createNotice,
-	getNotices,
-	getNoticeById,
+	getNotice,
 };
