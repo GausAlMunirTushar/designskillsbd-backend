@@ -1,5 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const cors = require('cors');
 const routes = require('../routes');
 const connnectDB = require('../config/database');
 
@@ -13,7 +14,7 @@ const app = express();
 
 // Middleware to parse JSON
 app.use(express.json());
-
+app.use(cors())
 // Get health
 app.get("/health", (req, res) => {
 	res.status(200).json({ message: "Server is up and running" });
