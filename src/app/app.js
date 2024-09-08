@@ -14,6 +14,11 @@ const app = express();
 // Middleware to parse JSON
 app.use(express.json());
 
+// Get health
+app.get("/health", (req, res) => {
+	res.status(200).json({ message: "Server is up and running" });
+});
+
 // Use the routes
 app.use('/api/v1', routes);
 
